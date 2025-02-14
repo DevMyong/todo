@@ -29,6 +29,10 @@ jobs:
           git config --global user.email "myong.dev@gmail.com"
           git config --global user.name "damon"
 
+      - name: Update remote URL with GITHUB_TOKEN
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/DevMyong/todo.git
+
       - name: Increment version based on commit type
         run: |
           VERSION=$(cat version.txt)
