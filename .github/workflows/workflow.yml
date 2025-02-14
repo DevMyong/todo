@@ -24,6 +24,11 @@ jobs:
           echo "Current version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+      - name: Set Git user info
+        run: |
+          git config --global user.email "myong.dev@gmail.com"
+          git config --global user.name "damon"
+
       - name: Increment version based on commit type
         run: |
           VERSION=$(cat version.txt)
