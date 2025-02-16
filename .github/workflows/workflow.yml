@@ -32,7 +32,6 @@ jobs:
       - name: Update remote URL with GITHUB_TOKEN
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/DevMyong/todo.git
-          git remote -v  # 원격 URL을 확인하여 토큰이 포함되어 있는지 점검
 
       - name: Increment version based on commit type
         run: |
@@ -40,31 +39,31 @@ jobs:
           IFS='.' read -r major minor patch <<< "$VERSION"
           
           # 커밋 메시지에 따라 버전 증가
-          if git log -1 --pretty=%B | grep -q "BREAKING CHANGE"; then
-            major=$((major + 1))
-            minor=0
-            patch=0
-          elif git log -1 --pretty=%B | grep -q "feat"; then
-            minor=$((minor + 1))
-            patch=0
-          elif git log -1 --pretty=%B | grep -q "fix"; then
-            patch=$((patch + 1))
-          fi
-
+          git log --pretty=%B | while read -r commit_msg; do
+            if echo "$commit_msg" | grep -q "BREAKING CHANGE"; then
+              major=$((major + 1))
+              minor=0
+              patch=0
+            elif echo "$commit_msg" | grep -q "feat"; then
+              minor=$((minor + 1))
+              patch=0
+            elif echo "$commit_msg" | grep -q "fix"; then
+              patch=$((patch + 1))
+            fi
+          done
+          
+          # 버전 업데이트가 필요할 때만 커밋과 태그 생성
           old_version=$(cat version.txt)
           new_version="$major.$minor.$patch"
           
-          if [ "$old_version" = "$new_version" ]; then
-          echo "No version bump, skipping commit and tag."
-          else
+          if [ "$old_version" != "$new_version" ]; then
           echo $new_version > version.txt
           git commit -am "Bump version to $new_version"
           git tag -a "v$new_version" -m "Release version $new_version"
           git push origin HEAD --follow-tags
+          else
+          echo "No version bump, skipping commit and tag."
           fi
-
-      - name: List files
-        run: ls -al
 
       - name: Build Docker image
         run: |
