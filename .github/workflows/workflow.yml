@@ -75,6 +75,7 @@ jobs:
           else
             echo "No version bump, skipping commit and tag."
           fi
+          echo "VERSION=$new_version" >> $GITHUB_ENV
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -84,10 +85,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$new_version"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$VERSION"
           docker build -t $IMAGE_NAME .
 
       - name: Push Docker image to Docker Hub
         run: |
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$new_version"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$VERSION"
           docker push $IMAGE_NAME
