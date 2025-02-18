@@ -57,10 +57,10 @@ jobs:
               major=$((major + 1))
               minor=0
               patch=0
-            elif echo "$commit_msg" | grep -q "^feat"; then
+            elif echo "$commit_msg" | grep -q "feat"; then
               minor=$((minor + 1))
               patch=0
-            elif echo "$commit_msg" | grep -q "^fix"; then
+            elif echo "$commit_msg" | grep -q "fix"; then
               patch=$((patch + 1))
             fi
           done
