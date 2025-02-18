@@ -48,10 +48,9 @@ jobs:
 
       - name: Increment version based on commit type
         run: |
-          VERSION=$(cat version.txt)
+          echo "Incrementing version based on commit type"
           IFS='.' read -r major minor patch <<< "$VERSION"
           
-          # 커밋 메시지에 따라 버전 증가
           git log --pretty=%B | while read -r commit_msg; do
             if echo "$commit_msg" | grep -q "BREAKING CHANGE"; then
               major=$((major + 1))
@@ -65,17 +64,16 @@ jobs:
             fi
           done
           
-          # 버전 업데이트가 필요할 때만 커밋과 태그 생성
-          old_version=$(cat version.txt)
+          old_version=$VERSION
           new_version="$major.$minor.$patch"
           
           if [ "$old_version" != "$new_version" ]; then
-          echo $new_version > version.txt
-          git commit -am "Bump version to $new_version"
-          git tag -a "v$new_version" -m "Release version $new_version"
-          git push origin HEAD --follow-tags
+            echo $new_version > version.txt
+            git commit -am "Bump version to $new_version"
+            git tag -a "v$new_version" -m "Release version $new_version"
+            git push origin HEAD --follow-tags
           else
-          echo "No version bump, skipping commit and tag."
+            echo "No version bump, skipping commit and tag."
           fi
 
       - name: Log in to Docker Hub
@@ -86,12 +84,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          VERSION=$(cat version.txt)
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$VERSION"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$new_version"
           docker build -t $IMAGE_NAME .
 
       - name: Push Docker image to Docker Hub
         run: |
-          VERSION=$(cat version.txt)
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$VERSION"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$new_version"
           docker push $IMAGE_NAME
