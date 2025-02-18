@@ -87,18 +87,18 @@ jobs:
             echo "No version bump, skipping commit and tag."
           fi
 
-        old_version=$VERSION
-        new_version="$major.$minor.$patch"
-        
-        if [ "$old_version" != "$new_version" ]; then
-          echo $new_version > version.txt
-          git commit -am "Bump version to $new_version"
-          git tag -a "v$new_version" -m "Release version $new_version"
-          git push origin HEAD --follow-tags
-        else
-          echo "No version bump, skipping commit and tag."
-        fi
-        echo "VERSION=$new_version" >> $GITHUB_ENV
+          old_version=$VERSION
+          new_version="$major.$minor.$patch"
+          
+          if [ "$old_version" != "$new_version" ]; then
+            echo $new_version > version.txt
+            git commit -am "Bump version to $new_version"
+            git tag -a "v$new_version" -m "Release version $new_version"
+            git push origin HEAD --follow-tags
+          else
+            echo "No version bump, skipping commit and tag."
+          fi
+          echo "VERSION=$new_version" >> $GITHUB_ENV
 
 #      - name: Log in to Docker Hub
 #        uses: docker/login-action@v2
