@@ -52,14 +52,15 @@ jobs:
           IFS='.' read -r major minor patch <<< "$VERSION"
           
           git log --pretty=%B | while read -r commit_msg; do
+          echo "$commit_msg"
             if echo "$commit_msg" | grep -q "BREAKING CHANGE"; then
               major=$((major + 1))
               minor=0
               patch=0
-            elif echo "$commit_msg" | grep -qE "^feat(:|\(.*\):)"; then
+            elif echo "$commit_msg" | grep -qE "^feat(:|\(.*\))"; then
               minor=$((minor + 1))
               patch=0
-            elif echo "$commit_msg" | grep -qE "^fix(:|\(.*\):)"; then
+            elif echo "$commit_msg" | grep -qE "^fix(:|\(.*\))"; then
               patch=$((patch + 1))
             fi
           done
