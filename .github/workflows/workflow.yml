@@ -56,7 +56,7 @@ jobs:
               major=$((major + 1))
               minor=0
               patch=0
-            elif echo "$commit_msg" | grep -qE "^feat(:|\(.*\):); then
+            elif echo "$commit_msg" | grep -qE "^feat(:|\(.*\):)"; then
               minor=$((minor + 1))
               patch=0
             elif echo "$commit_msg" | grep -qE "^fix(:|\(.*\):)"; then
