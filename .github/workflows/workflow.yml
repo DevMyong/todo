@@ -50,7 +50,8 @@ jobs:
         run: |
           echo "Incrementing version based on commit type"
           IFS='.' read -r major minor patch <<< "$VERSION"
-          echo "$commit_msg"
+          git log --pretty=%B --reverse
+          
           git log --pretty=%B | while read -r commit_msg; do
             if echo "$commit_msg" | grep -q "BREAKING CHANGE"; then
               major=$((major + 1))
