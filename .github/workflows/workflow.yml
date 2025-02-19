@@ -1,94 +1,20 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline - Pull Request Event
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-#    paths:
-#      - 'services/todo/**'
-#      - 'services/user/**'
+  workflow_dispatch:
+
+env:
+  GO_VERSION: 1.23
 
 jobs:
-  versioning-and-build:
+  decrement-labels:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Get current version
-        id: version
-        run: |
-          VERSION=$(cat version.txt)
-          echo "Current version: $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: '1.23'
-
-      - name: Install dependencies
-        run: |
-          go mod tidy
-
-      - name: Run tests
-        run: |
-          go test ./...  # 프로젝트 내 모든 테스트 실행
-
-      - name: Set Git user info
-        run: |
-          git config --global user.email "myong.dev@gmail.com"
-          git config --global user.name "damon"
-
-      - name: Update remote URL with GITHUB_TOKEN
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/DevMyong/todo.git
-
-      - name: Increment version based on commit type
-        run: |
-          echo "Incrementing version based on commit type"
-          IFS='.' read -r major minor patch <<< "$VERSION"
-          
-          git log --pretty=%B | while read -r commit_msg; do
-            if echo "$commit_msg" | grep -q "BREAKING CHANGE"; then
-              major=$((major + 1))
-              minor=0
-              patch=0
-            elif echo "$commit_msg" | grep -q "feat"; then
-              minor=$((minor + 1))
-              patch=0
-            elif echo "$commit_msg" | grep -q "fix"; then
-              patch=$((patch + 1))
-            fi
-          done
-          
-          old_version=$VERSION
-          new_version="$major.$minor.$patch"
-          
-          if [ "$old_version" != "$new_version" ]; then
-            echo $new_version > version.txt
-            git commit -am "Bump version to $new_version"
-            git tag -a "v$new_version" -m "Release version $new_version"
-            git push origin HEAD --follow-tags
-          else
-            echo "No version bump, skipping commit and tag."
-          fi
-          echo "VERSION=$new_version" >> $GITHUB_ENV
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build Docker image
-        run: |
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$VERSION"
-          docker build -t $IMAGE_NAME .
-
-      - name: Push Docker image to Docker Hub
-        run: |
-          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:$VERSION"
-          docker push $IMAGE_NAME
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Run d-day-labeler Action
+        uses: devmyong/d-day-labeler@latest
