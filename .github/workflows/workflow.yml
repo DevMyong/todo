@@ -20,3 +20,4 @@ jobs:
         uses: devmyong/d-day-labeler@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# ㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ
