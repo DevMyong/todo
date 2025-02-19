@@ -17,4 +17,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Run d-day-labeler Action
-        uses: devmyong/d-day-labeler@v1.0.0
+        uses: devmyong/d-day-labeler@v1.0.1
