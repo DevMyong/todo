@@ -2,23 +2,6 @@ name: D day labeler
 
 on:
   workflow_dispatch:
-    inputs:
-        dry-run:
-            description: "Run the action without making any changes."
-            default: "false"
-            required: false
-        timezone:
-            description: "Timezone to use for the action."
-            default: "Asia/Seoul"
-            required: false
-        label-prefix:
-            description: "Prefix of the labels to decrement."
-            default: "D-"
-            required: false
-        label-format:
-            description: "Format of the labels to decrement."
-            default: "D-[0-9]+"
-            required: false
 
 env:
   GO_VERSION: 1.23
