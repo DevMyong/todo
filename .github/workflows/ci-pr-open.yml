@@ -12,6 +12,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Assigns default PR metadata
-        run: github.com/devmyong/auto-assign@v1.0.0
+        uses: github.com/devmyong/auto-assign@v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
