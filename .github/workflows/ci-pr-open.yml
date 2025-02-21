@@ -16,3 +16,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.number }}
+
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.24'
+
+      - name: Install dependencies
+        run: |
+          go mod tidy
+
+      - name: Run tests
+        run: |
+          go test ./...  # 프로젝트 내 모든 테스트 실행
