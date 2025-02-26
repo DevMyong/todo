@@ -2,7 +2,7 @@ name: CI for PRs
 
 on:
   pull_request:
-    types: [opened, ready_for_review]
+    types: [ opened, ready_for_review ]
 
 jobs:
   add-auto-assign:
@@ -35,3 +35,10 @@ jobs:
       - name: Run tests
         run: |
           go test ./...  # 프로젝트 내 모든 테스트 실행
+
+  show-event:
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - name: Display GITHUB_EVENT_PATH content
+        run: cat "$GITHUB_EVENT_PATH"
