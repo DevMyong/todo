@@ -1,0 +1,12 @@
+name: Check GITHUB_EVENT_PATH
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  show-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display GITHUB_EVENT_PATH content
+        run: cat "$GITHUB_EVENT_PATH"
